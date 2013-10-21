@@ -14,7 +14,7 @@ my $ua ||= Mojo::UserAgent->new();
 sub info($) { say sprintf('%30s: %s',scalar localtime, shift) }
 
 sub get_to_tmp {
-    my $path = shift;
+    my $path = shift or die "no path";
     my $query = shift || {};
     #info $path;
     my $url  = Mojo::URL->new($url_base)->path($path.'.ttl');
@@ -48,6 +48,14 @@ sub get_json {
     my $res  = $tx->success or die "Error getting $url : " . $tx->error;
     my $json = $res->json or die $url.' : '.$res->message.' : '.$res->body;
     return $json;
+}
+
+for my $resource (qw/article journal person organization/) {
+    info $resource;
+    my $instances = get_json("/$resource", { all => 1 });
+    for my $instance (@$instances) { ### importing-->[%]     done
+        load_ttl_file(get_to_tmp("$instance->{uri}"));
+    }
 }
 
 my $json = get_json("/report", { all => 1 });
