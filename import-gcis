@@ -1,0 +1,51 @@
+#!/usr/bin/env perl
+
+use Mojo::UserAgent;
+use File::Temp;
+use v5.14;
+
+my $url_base  = q[http://data.gcis-dev-front.joss.ucar.edu];
+my $report_id = q[nca3draft];
+my $graph_uri = q[http://data.globalchange.gov];
+
+my $ua ||= Mojo::UserAgent->new();
+
+sub info($) { say sprintf('%30s: %s',scalar localtime, shift) }
+
+sub get_to_tmp {
+    my $path = shift;
+    info $path;
+    my $url  = Mojo::URL->new($url_base)->path($path) . '.ttl';
+    my $tx   = $ua->get($url);
+    my $res  = $tx->success or die "Error getting $url : " . $tx->error;
+    my $tmp  = File::Temp->new;
+    $res->content->asset->move_to("$tmp") or die $!;
+    return $tmp;
+}
+
+sub load_ttl_file {
+    my $file = shift;
+    # vload ttl global-slr.ttl http://data.globalchange.gov
+    my $errs = File::Temp->new;
+    system("vload ttl $file $graph_uri > $errs 2>&1")==0 or do {
+        say "Failed to load $file (see $errs)";
+        $file->unlink_on_destroy(0);
+        $errs->unlink_on_destroy(0);
+        exit;
+    };
+    return 1;
+}
+
+sub get_json {
+    my $path = shift;
+    my $url  = Mojo::URL->new($url_base)->path($path) . '.json';
+    my $tx   = $ua->get($url);
+    my $res  = $tx->success or die "Error getting $url : " . $tx->error;
+    return $res->json;
+}
+
+my $json = get_json("/report");
+for my $report (@$json) {
+    load_ttl_file( get_to_tmp("/report/$report->{identifier}") );
+}
+
