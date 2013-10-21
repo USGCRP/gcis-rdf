@@ -2,6 +2,7 @@
 
 use Mojo::UserAgent;
 use File::Temp;
+use Smart::Comments;
 use v5.14;
 
 my $url_base  = q[http://data.gcis-dev-front.joss.ucar.edu];
@@ -15,7 +16,7 @@ sub info($) { say sprintf('%30s: %s',scalar localtime, shift) }
 sub get_to_tmp {
     my $path = shift;
     my $query = shift || {};
-    info $path;
+    #info $path;
     my $url  = Mojo::URL->new($url_base)->path($path.'.ttl');
     $url->query(%$query);
     my $tx   = $ua->get($url);
@@ -52,9 +53,12 @@ sub get_json {
 my $json = get_json("/report", { all => 1 });
 for my $report (@$json) {
     load_ttl_file( get_to_tmp("/report/$report->{identifier}") );
+    my $id = $report->{identifier};
+    info "report $id";
     for my $resource (qw/figure finding chapter reference image/) {
-        my $items = get_json("/report/$report->{identifier}/$resource");
-        for my $item (@$items) {
+        my $items = get_json("/report/$id/$resource", { all => 1 });
+        info $resource if @$items;
+        for my $item (@$items) { ### importing--->[%]      done
             load_ttl_file(get_to_tmp("$item->{uri}"));
         }
     }
