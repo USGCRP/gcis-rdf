@@ -21,7 +21,16 @@ my $v = Virtuoso->new(
 
 &main;
 
-sub info($) { say sprintf('%30s: %s',scalar localtime, shift) }
+sub info($) {
+    my $msg = shift;
+    say sprintf('%30s: %s',scalar localtime, $msg);
+    $v->logger->info($msg);
+}
+
+sub debug {
+    my $msg = shift;
+    $v->logger->info($msg);
+}
 
 sub get_to_tmp {
     my $path = shift or die "no path";
@@ -50,10 +59,12 @@ sub get_json {
 sub main {
     my $start = time;
     $v->drop_graph;
+    $v->drop_graph('http://tmp2.data.globalchange.gov');
     for my $resource (qw/article journal person organization/) {
         info $resource;
         my $instances = get_json("/$resource", { all => 1 });
         for my $instance (@$instances) { ### importing-->[%]     done
+            debug $instance->{uri};
             $v->load_ttl_file(get_to_tmp("$instance->{uri}"));
         }
     }
@@ -67,10 +78,14 @@ sub main {
             my $items = get_json("/report/$id/$resource", { all => 1 });
             info $resource if @$items;
             for my $item (@$items) { ### importing--->[%]      done
+                debug $item->{uri};
                 $v->load_ttl_file(get_to_tmp("$item->{uri}"));
             }
         }
     }
+    info "Renaming";
+    $v->drop_graph('http://data.globalchange.gov');
+    $v->rename_graph_to('http://data.globalchange.gov');
     say "time elapsed : ".duration(time - $start);
 }
 
