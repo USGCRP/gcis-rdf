@@ -1,0 +1,55 @@
+#!/bin/sh
+
+isql_cmd="isql 1111 __dbinfohere__"
+isql_pwd="__dbinfohere__"
+
+${isql_cmd} ${isql_pwd} << EOF
+
+sparql clear graph <http://www.openlinksw.com/schemas/virtrdf#>;
+sparql clear graph <http://localhost:8890/sparql>;
+sparql clear graph <http://localhost:8890/DAV/>;
+sparql clear graph <http://www.w3.org/2002/07/owl#>;
+sparql clear graph <http://www.w3.org/2002/07/owl>;
+sparql clear graph <http://data.gcis-dev-front.joss.ucar.edu/report/nca3draft>;
+sparql clear graph <http://www.w3.org/ns/prov>;
+sparql clear graph <virtrdf-label>;
+sparql clear graph <http://www.openlinksw.com/schemas/RDF_Mapper_Ontology/1.0/>;
+sparql clear graph <http://bblfish.net/work/atom-owl/2006-06-06/>;
+sparql clear graph <http://purl.org/dc/elements/1.1/>;
+sparql clear graph <http://www.openlinksw.com/schema/attribution#>;
+sparql clear graph <http://purl.org/ontology/bibo/>;
+sparql clear graph <http://purl.org/dc/terms/>;
+sparql clear graph <http://xmlns.com/foaf/0.1/>;
+sparql clear graph <http://purl.org/goodrelations/v1>;
+sparql clear graph <http://open.vocab.org/terms>;
+sparql clear graph <http://www.openlinksw.com/schemas/angel#>;
+sparql clear graph <http://www.openlinksw.com/schemas/dbpedia-spotlight#>;
+sparql clear graph <http://www.openlinksw.com/schemas/oplbase>;
+sparql clear graph <http://www.openlinksw.com/schemas/bestbuy>;
+sparql clear graph <http://www.openlinksw.com/schemas/cert#>;
+sparql clear graph <http://www.openlinksw.com/schemas/cnet>;
+sparql clear graph <http://www.openlinksw.com/schemas/crunchbase>;
+sparql clear graph <http://www.openlinksw.com/schemas/cv>;
+sparql clear graph <http://www.openlinksw.com/schemas/ebay>;
+sparql clear graph <http://www.openlinksw.com/schemas/evri>;
+sparql clear graph <http://www.openlinksw.com/schemas/google-base>;
+sparql clear graph <http://www.openlinksw.com/schemas/googleplus>;
+sparql clear graph <http://www.openlinksw.com/schemas/klout>;
+sparql clear graph <http://www.openlinksw.com/schemas/linkedin>;
+sparql clear graph <http://www.openlinksw.com/schemas/twitter>;
+sparql clear graph <http://www.openlinksw.com/schemas/money>;
+sparql clear graph <http://www.openlinksw.com/schemas/nyt>;
+sparql clear graph <http://www.openlinksw.com/schemas/opengraph>;
+sparql clear graph <http://www.openlinksw.com/schemas/stackoverflow#>;
+sparql clear graph <http://www.openlinksw.com/schemas/tesco>;
+sparql clear graph <http://www.openlinksw.com/schemas/wolframalpha#>;
+sparql clear graph <http://www.w3.org/2007/05/powder-s#>;
+sparql clear graph <http://www.w3.org/1999/02/22-rdf-syntax-ns#>;
+sparql clear graph <http://www.w3.org/2000/01/rdf-schema#>;
+sparql clear graph <http://scot-project.org/scot/ns#>;
+sparql clear graph <http://rdfs.org/sioc/ns#>;
+sparql clear graph <http://www.w3.org/2004/02/skos/core>;
+
+EOF
+
+
