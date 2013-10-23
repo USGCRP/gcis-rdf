@@ -3,13 +3,23 @@
 use Mojo::UserAgent;
 use File::Temp;
 use Smart::Comments;
+use Time::Duration qw/duration/;
 use v5.14;
+
+use lib '.';
+use Virtuoso;
 
 my $url_base  = q[http://data.gcis-dev-front.joss.ucar.edu];
 my $report_id = q[nca3draft];
-my $graph_uri = q[http://data.globalchange.gov];
 
-my $ua ||= Mojo::UserAgent->new();
+my $ua = Mojo::UserAgent->new();
+my $v = Virtuoso->new(
+     user => "dba",
+     pass => "dba",
+     graph_uri => q[http://tmp.data.globalchange.gov]
+);
+
+&main;
 
 sub info($) { say sprintf('%30s: %s',scalar localtime, shift) }
 
@@ -26,19 +36,6 @@ sub get_to_tmp {
     return $tmp;
 }
 
-sub load_ttl_file {
-    my $file = shift;
-    # vload ttl global-slr.ttl http://data.globalchange.gov
-    my $errs = File::Temp->new;
-    system("vload ttl $file $graph_uri > $errs 2>&1")==0 or do {
-        say "Failed to load $file (see $errs)";
-        $file->unlink_on_destroy(0);
-        $errs->unlink_on_destroy(0);
-        exit;
-    };
-    return 1;
-}
-
 sub get_json {
     my $path = shift;
     my $query = shift || {};
@@ -50,29 +47,30 @@ sub get_json {
     return $json;
 }
 
-for my $resource (qw/article journal person organization/) {
-    info $resource;
-    my $instances = get_json("/$resource", { all => 1 });
-    for my $instance (@$instances) { ### importing-->[%]     done
-        load_ttl_file(get_to_tmp("$instance->{uri}"));
-    }
-}
-
-my $json = get_json("/report", { all => 1 });
-for my $report (@$json) {
-    load_ttl_file( get_to_tmp("/report/$report->{identifier}") );
-    my $id = $report->{identifier};
-    info "report $id";
-    for my $resource (qw/figure finding chapter reference image/) {
-        my $items = get_json("/report/$id/$resource", { all => 1 });
-        info $resource if @$items;
-        for my $item (@$items) { ### importing--->[%]      done
-            load_ttl_file(get_to_tmp("$item->{uri}"));
+sub main {
+    my $start = time;
+    $v->drop_graph;
+    for my $resource (qw/article journal person organization/) {
+        info $resource;
+        my $instances = get_json("/$resource", { all => 1 });
+        for my $instance (@$instances) { ### importing-->[%]     done
+            $v->load_ttl_file(get_to_tmp("$instance->{uri}"));
         }
     }
+
+    my $json = get_json("/report", { all => 1 });
+    for my $report (@$json) {
+        $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}") );
+        my $id = $report->{identifier};
+        info "report $id";
+        for my $resource (qw/figure finding chapter reference image/) {
+            my $items = get_json("/report/$id/$resource", { all => 1 });
+            info $resource if @$items;
+            for my $item (@$items) { ### importing--->[%]      done
+                $v->load_ttl_file(get_to_tmp("$item->{uri}"));
+            }
+        }
+    }
+    say "time elapsed : ".duration(time - $start);
 }
-
-
-
-
 
