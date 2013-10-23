@@ -2,6 +2,7 @@
 
 use Mojo::UserAgent;
 use File::Temp;
+use Sys::Hostname qw/hostname/;
 use Smart::Comments;
 use Time::Duration qw/duration/;
 use v5.14;
@@ -9,7 +10,13 @@ use v5.14;
 use lib '.';
 use Virtuoso;
 
-my $url_base  = q[http://data.gcis-dev-front.joss.ucar.edu];
+my $hostname = hostname();
+my $url_base  =
+      $hostname =~ /gcis-dev-rdf/  ?  q[http://data.gcis-dev-front.joss.ucar.edu]
+    : $hostname =~ /gcis-test-rdf/ ?  q[http://data.gcis-test-front.joss.ucar.edu]
+    : $hostname =~ /gcis-prod-rdf/ ?  q[http://data.gcis-prod-front.joss.ucar.edu]
+    : die "no host for $hostname"
+    ;
 my $report_id = q[nca3draft];
 
 my $ua = Mojo::UserAgent->new();
@@ -58,6 +65,7 @@ sub get_json {
 
 sub main {
     my $start = time;
+    info "getting from $url_base";
     $v->drop_graph;
     $v->drop_graph('http://tmp2.data.globalchange.gov');
     for my $resource (qw/article journal person organization/) {
@@ -87,5 +95,8 @@ sub main {
     $v->drop_graph('http://data.globalchange.gov');
     $v->rename_graph_to('http://data.globalchange.gov');
     say "time elapsed : ".duration(time - $start);
+    say "removing logfile  ".$v->logger->path;
+    sleep 3;
+    unlink $v->logger->path;
 }
 
