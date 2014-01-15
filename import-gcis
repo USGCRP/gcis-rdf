@@ -65,6 +65,7 @@ sub get_json {
 
 sub main {
     my $start = time;
+    my $count = 0;
     info "getting from $url_base";
     $v->drop_graph;
     $v->drop_graph('http://tmp2.data.globalchange.gov');
@@ -74,6 +75,7 @@ sub main {
         for my $instance (@$instances) { ### importing-->[%]     done
             debug $instance->{uri};
             $v->load_ttl_file(get_to_tmp("$instance->{uri}"));
+            $count++;
         }
     }
 
@@ -88,6 +90,7 @@ sub main {
             for my $item (@$items) { ### importing--->[%]      done
                 debug $item->{uri};
                 $v->load_ttl_file(get_to_tmp("$item->{uri}"));
+                $count++;
             }
         }
     }
@@ -95,6 +98,7 @@ sub main {
     $v->drop_graph('http://data.globalchange.gov');
     $v->rename_graph_to('http://data.globalchange.gov');
     say "time elapsed : ".duration(time - $start);
+    say "ttl files loaded : ".$count;
     say "removing logfile  ".$v->logger->path;
     sleep 3;
     unlink $v->logger->path;
