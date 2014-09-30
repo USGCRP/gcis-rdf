@@ -10,6 +10,14 @@ use v5.14;
 use lib '.';
 use Virtuoso;
 
+# config file looks like this :
+# { user => 'x', pass => 'y' }
+#
+my $config = "$ENV{HOME}/etc/isql.conf";
+my $conf = require $config;
+my $pw = $conf->{pass};
+my $user = $conf->{user};
+
 my $hostname = hostname();
 my $url_base  =
       $hostname =~ /gcis-dev-rdf/  ?  q[http://data.gcis-dev-front.joss.ucar.edu]
@@ -20,8 +28,8 @@ my $url_base  =
 
 my $ua = Mojo::UserAgent->new();
 my $v = Virtuoso->new(
-     user => "dba",
-     pass => "dba",
+     user => $user,
+     pass => $pw,
      graph_uri => q[http://tmp.data.globalchange.gov]
 );
 
