@@ -13,11 +13,10 @@ use Virtuoso;
 my $hostname = hostname();
 my $url_base  =
       $hostname =~ /gcis-dev-rdf/  ?  q[http://data.gcis-dev-front.joss.ucar.edu]
-    : $hostname =~ /gcis-test-rdf/ ?  q[http://data.gcis-test-front.joss.ucar.edu]
+    : $hostname =~ /gcis-test-rdf/ ?  q[http://data-stage.globalchange.gov]
     : $hostname =~ /gcis-prod-rdf/ ?  q[http://data.globalchange.gov]
     : die "no host for $hostname"
     ;
-my $report_id = q[nca3draft];
 
 my $ua = Mojo::UserAgent->new();
 my $v = Virtuoso->new(
