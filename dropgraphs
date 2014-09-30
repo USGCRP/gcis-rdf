@@ -1,7 +1,10 @@
 #!/bin/sh
 
-isql_cmd="isql 1111 __dbinfohere__"
-isql_pwd="__dbinfohere__"
+user=$1
+pw=$2
+
+isql_cmd="isql 1111 $user"
+isql_pwd="$pw"
 
 ${isql_cmd} ${isql_pwd} << EOF
 

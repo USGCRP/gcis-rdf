@@ -1,4 +1,6 @@
 #!/bin/bash
 
-isql 1111 __dbinfohere__ __dbinfohere__ < ./sparql_io.sql
+user=$1
+pw=$2
+isql 1111 $user $pw < ./sparql_io.sql
 
