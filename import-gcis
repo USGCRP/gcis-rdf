@@ -68,7 +68,7 @@ sub main {
     info "getting from $url_base";
     $v->drop_graph;
     $v->drop_graph('http://tmp2.data.globalchange.gov');
-    for my $resource (qw/article journal person organization dataset activity/) {
+    for my $resource (qw/article journal book webpage region person organization dataset activity/) {
         info $resource;
         my $instances = get_json("/$resource", { all => 1 });
         for my $instance (@$instances) { ### importing-->[%]     done
