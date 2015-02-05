@@ -76,7 +76,7 @@ sub main {
     info "getting from $url_base";
     $v->drop_graph;
     $v->drop_graph('http://tmp2.data.globalchange.gov');
-    for my $resource (qw/article journal book webpage region person organization dataset activity platform instrument/) {
+    for my $resource (qw/article journal book webpage region person organization dataset activity platform instrument image/) {
         info $resource;
         my $instances = get_json("/$resource", { all => 1 });
         for my $instance (@$instances) { ### importing-->[%]     done
@@ -91,7 +91,7 @@ sub main {
         $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}") );
         my $id = $report->{identifier};
         info "report $id";
-        for my $resource (qw/figure table finding chapter reference image/) {
+        for my $resource (qw/figure table finding chapter reference/) {
             my $items = get_json("/report/$id/$resource", { all => 1 });
             info $resource if @$items;
             for my $item (@$items) { ### importing--->[%]      done
