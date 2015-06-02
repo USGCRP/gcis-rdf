@@ -4,8 +4,10 @@ use Mojo::UserAgent;
 use Data::Dumper;
 use v5.14;
 
+my $rdf_source_url = shift || 'http://data.globalchange.gov';
+
 my $ua = Mojo::UserAgent->new();
-my $src = 'http://data.gcis-dev-front.joss.ucar.edu/resources.json';
+my $src = "$rdf_source_url/resources.json";
 my $data = $ua->get($src)->res->json;
 #say Dumper($data);
 
