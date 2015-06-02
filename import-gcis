@@ -53,7 +53,7 @@ sub get_to_tmp {
     my $url  = Mojo::URL->new($url_base)->path($path.'.ttl');
     $url->query(%$query);
     my $tx   = $ua->get($url);
-    my $res  = $tx->success or die "Error getting $url : " . $tx->error;
+    my $res  = $tx->success or do { warn "Error getting $url : " . $tx->error; return undef; };
     my $tmp  = File::Temp->new;
     $res->content->asset->move_to("$tmp") or die $!;
     return $tmp;
@@ -65,7 +65,7 @@ sub get_json {
     my $url  = Mojo::URL->new($url_base)->path($path.'.json');
     $url->query(%$query);
     my $tx   = $ua->get($url);
-    my $res  = $tx->success or die "Error getting $url : " . $tx->error;
+    my $res  = $tx->success or do { warn "Error getting $url : " . $tx->error; return undef; };
     my $json = $res->json or die $url.' : '.$res->message.' : '.$res->body;
     return $json;
 }
@@ -76,7 +76,7 @@ sub main {
     info "getting from $url_base";
     $v->drop_graph;
     $v->drop_graph('http://tmp2.data.globalchange.gov');
-    for my $resource (qw/article journal book webpage region person organization dataset activity platform instrument model project scenario activity/) {
+    for my $resource (qw/article journal book webpage region person organization dataset activity platform instrument model project scenario activity image/) {
         info $resource;
         my $instances = get_json("/$resource", { all => 1 });
         for my $instance (@$instances) { ### importing-->[%]     done
@@ -88,7 +88,7 @@ sub main {
 
     my $json = get_json("/report", { all => 1 });
     for my $report (@$json) {
-        $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}") );
+        $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}") ) or next;
         my $id = $report->{identifier};
         info "report $id";
         for my $resource (qw/figure table finding chapter reference/) {

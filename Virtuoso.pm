@@ -15,10 +15,11 @@ has 'logger' => sub { state $log ||= Mojo::Log->new->path("/tmp/import-gcis.$$.l
 
 sub load_ttl_file {
     my $s         = shift;
-    my $file      = shift;
+    my $file      = shift or return;
     my $graph_uri = $s->graph_uri;
     my $full      = abs_path("$file");
     $s->_do_isql( "DB.DBA.TTLP_MT(file_to_string_output('$full'),'','$graph_uri', 255);" );
+    return 1;
 }
 
 sub drop_graph {
