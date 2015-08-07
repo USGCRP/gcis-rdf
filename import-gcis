@@ -86,6 +86,16 @@ sub main {
         }
     }
 
+    # Instrument instances.
+    my $platforms = get_json("/platform", { all => 1 });
+    for my $platform (@$platforms) {
+        my $instances = get_json("/platform/$platform->{identifier}/instrument");
+        for my $instance (@$instances) {
+            $v->load_ttl_file( get_to_tmp($instance->{uri}) );
+        }
+    }
+
+
     my $json = get_json("/report", { all => 1 });
     for my $report (@$json) {
         $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}") ) or next;
