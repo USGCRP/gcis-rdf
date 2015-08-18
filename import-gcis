@@ -26,7 +26,7 @@ my $url_base  =
     : die "no host for $hostname"
     ;
 
-my $ua = Mojo::UserAgent->new();
+my $ua = Mojo::UserAgent->new()->max_redirects(3);
 my $v = Virtuoso->new(
      user => $user,
      pass => $pw,

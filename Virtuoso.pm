@@ -48,7 +48,7 @@ sub _do_isql {
     $sql .= ';' unless $sql =~ /;$/;
     my @cmd = ( $s->isql, $s->port, $s->user, $s->pass );
     my ( $out, $err );
-    run \@cmd, \$sql, \$out, \$err, timeout(10) or die "@cmd : $!";
+    run \@cmd, \$sql, \$out, \$err, timeout(60) or die "@cmd : $!";
     $s->logger->debug("$sql : $out : $err");
     return 1;
 }
