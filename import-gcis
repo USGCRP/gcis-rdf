@@ -75,7 +75,8 @@ sub main {
     my $count = 0;
     info "getting from $url_base";
     $v->drop_graph;
-    $v->drop_graph('http://tmp2.data.globalchange.gov');
+    $v->drop_graph('http://tmp.data.globalchange.gov');
+
     for my $resource (qw/article journal book webpage region person organization dataset activity platform instrument model project scenario activity image role_type/) {
         info $resource;
         my $instances = get_json("/$resource", { all => 1 });
@@ -92,13 +93,14 @@ sub main {
         my $instances = get_json("/platform/$platform->{identifier}/instrument");
         for my $instance (@$instances) {
             $v->load_ttl_file( get_to_tmp($instance->{uri}) );
+            $count++;
         }
     }
-
 
     my $json = get_json("/report", { all => 1 });
     for my $report (@$json) {
         $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}") ) or next;
+        $count++;
         my $id = $report->{identifier};
         info "report $id";
         for my $resource (qw/figure table finding chapter reference/) {
@@ -111,6 +113,7 @@ sub main {
             }
         }
     }
+
     info "Renaming";
     $v->drop_graph('http://data.globalchange.gov');
     $v->rename_graph_to('http://data.globalchange.gov');

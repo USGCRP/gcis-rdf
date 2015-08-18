@@ -32,7 +32,12 @@ sub rename_graph_to {
     my $s = shift;
     my $name = shift;
     my $old = $s->graph_uri;
-	$s->_do_isql("update DB.DBA.RDF_QUAD TABLE OPTION (index RDF_QUAD_GS) set g = iri_to_id ('$name') where g = iri_to_id ('$old', 0);");
+	$s->_do_isql(join "\n",
+        qq[log_enable(3);],
+        qq[update DB.DBA.RDF_QUAD TABLE OPTION (index RDF_QUAD_GS) set g = iri_to_id ('$name') where g = iri_to_id ('$old');],
+        qq[log_enable(1);],
+    );
+
     $s->graph_uri($name);
     return $s;
 }
