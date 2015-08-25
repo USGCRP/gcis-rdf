@@ -10,6 +10,8 @@ use v5.14;
 use lib '.';
 use Virtuoso;
 
+$ENV{MOJO_MAX_MESSAGE_SIZE} = 52428800;
+
 # config file looks like this :
 # { user => 'x', pass => 'y' }
 #
