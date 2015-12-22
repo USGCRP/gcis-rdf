@@ -84,7 +84,7 @@ sub main {
         my $instances = get_json("/$resource", { all => 1 });
         for my $instance (@$instances) { ### importing-->[%]     done
             debug $instance->{uri};
-            $v->load_ttl_file(get_to_tmp("$instance->{uri}"));
+            $v->load_ttl_file(get_to_tmp("$instance->{uri}", { show_all => 1 }));
             $count++;
         }
     }
@@ -94,14 +94,14 @@ sub main {
     for my $platform (@$platforms) {
         my $instances = get_json("/platform/$platform->{identifier}/instrument");
         for my $instance (@$instances) {
-            $v->load_ttl_file( get_to_tmp($instance->{uri}) );
+            $v->load_ttl_file( get_to_tmp($instance->{uri}, { show_all => 1 }) );
             $count++;
         }
     }
 
     my $json = get_json("/report", { all => 1 });
     for my $report (@$json) {
-        $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}") ) or next;
+        $v->load_ttl_file( get_to_tmp("/report/$report->{identifier}", { show_all => 1 }) ) or next;
         $count++;
         my $id = $report->{identifier};
         info "report $id";
@@ -110,7 +110,7 @@ sub main {
             info $resource if @$items;
             for my $item (@$items) { ### importing--->[%]      done
                 debug $item->{uri};
-                $v->load_ttl_file(get_to_tmp("$item->{uri}"));
+                $v->load_ttl_file(get_to_tmp("$item->{uri}", { show_all => 1 }));
                 $count++;
             }
         }
