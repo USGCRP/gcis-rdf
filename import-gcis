@@ -79,7 +79,7 @@ sub main {
     $v->drop_graph;
     $v->drop_graph('http://tmp.data.globalchange.gov');
 
-    for my $resource (qw/lexicon article journal book webpage region person organization dataset activity platform instrument model project scenario activity image role_type generic/) {
+    for my $resource (qw/lexicon article journal book webpage region person organization dataset activity platform instrument model project scenario activity image role_type generic file/) {
         info $resource;
         my $instances = get_json("/$resource", { all => 1 });
         for my $instance (@$instances) { ### importing-->[%]     done
