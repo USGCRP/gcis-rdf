@@ -13,7 +13,7 @@ sparql clear graph <http://localhost:8890/sparql>;
 sparql clear graph <http://localhost:8890/DAV/>;
 sparql clear graph <http://www.w3.org/2002/07/owl#>;
 sparql clear graph <http://www.w3.org/2002/07/owl>;
-sparql clear graph <http://data.gcis-dev-front.joss.ucar.edu/report/nca3draft>;
+sparql clear graph <http://data-dev.globalchange.gov/report/nca3draft>;
 sparql clear graph <http://www.w3.org/ns/prov>;
 sparql clear graph <virtrdf-label>;
 sparql clear graph <http://www.openlinksw.com/schemas/RDF_Mapper_Ontology/1.0/>;
