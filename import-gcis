@@ -22,9 +22,9 @@ my $user = $conf->{user};
 
 my $hostname = hostname();
 my $url_base  =
-      $hostname =~ /gcis-dev-rdf/  ?  q[http://data-dev.globalchange.gov]
-    : $hostname =~ /gcis-test-rdf/ ?  q[http://data-stage.globalchange.gov]
-    : $hostname =~ /gcis-prod-rdf/ ?  q[http://data.globalchange.gov]
+      $hostname =~ /gcis-dev-rdf/  ?  q[https://data-dev.globalchange.gov]
+    : $hostname =~ /gcis-test-rdf/ ?  q[https://data-stage.globalchange.gov]
+    : $hostname =~ /gcis-prod-rdf/ ?  q[https://data.globalchange.gov]
     : die "no host for $hostname"
     ;
 
@@ -32,7 +32,7 @@ my $ua = Mojo::UserAgent->new()->max_redirects(3);
 my $v = Virtuoso->new(
      user => $user,
      pass => $pw,
-     graph_uri => q[http://tmp.data.globalchange.gov]
+     graph_uri => q[https://tmp.data.globalchange.gov]
 );
 
 &main;
@@ -77,7 +77,7 @@ sub main {
     my $count = 0;
     info "getting from $url_base";
     $v->drop_graph;
-    $v->drop_graph('http://tmp.data.globalchange.gov');
+    $v->drop_graph('https://tmp.data.globalchange.gov');
 
     for my $resource (qw/lexicon article journal book webpage region person organization dataset activity platform instrument model project scenario activity image role_type generic/) {
         info $resource;
@@ -117,8 +117,8 @@ sub main {
     }
 
     info "Renaming";
-    $v->drop_graph('http://data.globalchange.gov');
-    $v->rename_graph_to('http://data.globalchange.gov');
+    $v->drop_graph('https://data.globalchange.gov');
+    $v->rename_graph_to('https://data.globalchange.gov');
     say "time elapsed : ".duration(time - $start);
     say "ttl files loaded : ".$count;
     say "removing logfile  ".$v->logger->path;
